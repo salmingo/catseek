@@ -1,8 +1,5 @@
 /*
- * ACatalog.cpp
- *
- *  Created on: 2016年6月13日
- *      Author: lxm
+ * @file ACatalog.cpp 星表访问接口
  */
 
 #include "ACatalog.h"

@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <string>
 #include "ATimeSpace.h"
-#include "ACatTycho2.h"
 #include "ACatUCAC4.h"
 
 using namespace std;
@@ -35,12 +34,10 @@ int main(int argc, char **argv) {
 	double ra0, dec0, radius(1.0);
 	double ra, dec;
 	ACatUCAC4 ucac4;
-	ACatTycho2 tycho2;
 	ATimeSpace ats;
 	int n, i;
 
 	ucac4.SetPathRoot("/Users/lxm/Catalogue/UCAC4");
-	tycho2.SetPathRoot("/Users/lxm/catalogue/tycho2/tycho2.dat");
 
 	ra0 = atof(argv[1]);
 	dec0 = atof(argv[2]);
@@ -50,32 +47,19 @@ int main(int argc, char **argv) {
 	if (ucac4.FindStar(ra0, dec0, radius)) {
 		ptr_ucac4_elem stars, star;
 
-		printf("from UCAC4:\n");
 		stars = ucac4.GetResult(n);
+		printf("%12s  %12s  %7s  %7s  %6s  %6s  %6s  %6s\n", "RA     ",
+				"DEC    ", "pmRA  ", "pmDEC ", "B  ", "V  ", "g  ", "r  ");
+		printf("%s\n", string(78, '-').c_str());
 		for (i = 0, star = stars; i < n; ++i, ++star) {
 			ra = (double) star->ra / MILLISEC;
 			dec = (double) star->spd / MILLISEC - 90.0;
-			printf("[%4d] %10.6f %10.6f %8.1f %8.1f %6.3f %6.3f\n", i + 1, ra,
-					dec, star->pmrac * 0.1, star->pmdc * 0.1,
-					star->apasm[1] * 0.001, star->apasm[3] * 0.001);
+			printf("%12.8f  %12.8f  %7.1f  %7.1f  %6.3f  %6.3f  %6.3f  %6.3f\n",
+					ra, dec, star->pmrac * 0.1, star->pmdc * 0.1,
+					star->apasm[0] * 0.001, star->apasm[1] * 0.001,
+					star->apasm[2] * 0.001, star->apasm[3] * 0.001);
 		}
 	}
-	else if (tycho2.FindStar(ra0, dec0, radius)) {
-		ptr_tycho2_elem stars, star;
-
-		printf("from Tycho2:\n");
-		stars = tycho2.GetResult(n);
-		for (i = 0, star = stars; i < n; ++i, ++star) {
-			ra = (double) star->ra / MILLISEC / 15;
-			dec = (double) star->spd / MILLISEC - 90.0;
-
-			printf("[%4d] %10.6f %10.6f %8.1f %8.1f %6.3f %6.3f\n", i + 1, ra,
-					dec, star->pmrac * 0.1, star->pmdc * 0.1,
-					star->apasm[0] * 0.001, star->apasm[1] * 0.001);
-		}
-	}
-	else
-		printf("!!! not found !!!\n");
 
 	return 0;
 }
